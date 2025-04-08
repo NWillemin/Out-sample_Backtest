@@ -232,11 +232,7 @@ with tab4:
             st.write(f"CVaR: {bench_cvar:.2%}")
 
         st.subheader("Performance Chart")
-        show_benchmark = st.checkbox("Compare with benchmark", value=True)
-        if show_benchmark:
-            fig = plot_cumulative_returns(portfolio_value, portfolio_value_bench)
-        else:
-            fig = plot_cumulative_returns(portfolio_value)
+        fig = plot_cumulative_returns(portfolio_value, portfolio_value_bench)
         st.pyplot(fig)
 
         st.subheader("Weight Allocation Over Time")
@@ -253,9 +249,6 @@ with tab4:
             st.pyplot(fig1_bench)
 
         st.subheader("Average Weight of each Asset")
-        if show_benchmark:
-            fig2 = plot_average_weights(real_weights, real_weights_bench)
-        else:
-            fig2 = plot_average_weights(real_weights)
+        fig2 = plot_average_weights(real_weights, real_weights_bench)
         st.pyplot(fig2)
     
