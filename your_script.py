@@ -70,20 +70,6 @@ with tab2:
     st.header("4. Rebalancing")
     rebalancing_unit = st.selectbox("Rebalancing unit", ["days", "weeks"])
     rebalancing_freq = st.number_input("Rebalancing frequency", min_value=1, value=4)
-    if all(t.strip() != "" for t in tickers):
-        # Get price data
-        op1 = yf.download(tickers=tickers, period='max', interval=interval)["Open"]
-        valid_index = op1.dropna().index
-    
-        if valid_index.empty:
-            st.warning("⚠️ No valid price data found. Check your tickers or try a different interval.")
-        else:
-            min_start = valid_index[0] + relativedelta(**{lookback_unit: lookback_period})
-            # Then show start_date selection:
-            start_date = st.date_input("Backtest start date", value=datetime.today() - timedelta(days=365), min_value=min_start)
-    else:
-        st.info("💡 Enter at least one valid ticker to proceed.")
-    min_start = valid_index[0]+relativedelta(**{lookback_unit: lookback_period})
     start_date = st.date_input("Backtest start date", value=datetime.today() - timedelta(days=365), min_value=min_start)
     end_date = st.date_input("Backtest end date", value=datetime.today())
 with tab3:
