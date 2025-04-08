@@ -87,6 +87,9 @@ def run_backtest(config):
     rb_dic = {'weeks': 7, 'days': 1}
     no_rb = (et_date-st_date).days//(rebalancing_freq*rb_dic[rebalancing_unit])
     start_trains = [st_date-relativedelta(**{lookback_unit: lookback_period})+relativedelta(days=1)+relativedelta(**{rebalancing_unit: rebalancing_freq})*x for x in range(no_rb)]
+    if start_trains[0] < opens.index[0]:
+        st.error(f"No Data Available for your first rebalancing. Data is only available as of {opens.index[0]} and your first training date is {start_trains[0]}")
+        st.stop()  # Stops the Streamlit script to avoid further errors
     start_trains = [returns.index[returns.index >= date].min() for date in start_trains]
     rb_dates = [st_date+relativedelta(**{rebalancing_unit: rebalancing_freq})*x for x in range(no_rb)]
     rb_dates = [opensd.dropna().index[opensd.dropna().index >= date].min() for date in rb_dates]
@@ -94,7 +97,7 @@ def run_backtest(config):
     last_test = end_tests[-1]+relativedelta(**{rebalancing_unit: rebalancing_freq})
     last_test = opensd.ffill().index[opensd.ffill().index>=last_test].min()
     end_tests.append(last_test)
-    
+
     def objective_sortino(weights, *args):
         avg_returns, returns_matrix, returns_type = args
         port_returns = np.dot(returns_matrix, weights)
