@@ -70,6 +70,11 @@ with tab2:
     st.header("4. Rebalancing")
     rebalancing_unit = st.selectbox("Rebalancing unit", ["days", "weeks"])
     rebalancing_freq = st.number_input("Rebalancing frequency", min_value=1, value=4)
+    data = yf.download(tickers = tickers, period='max', interval=interval)
+    
+    if start_trains[0] < opens.index[0]:
+        st.error(f"No Data Available for your first rebalancing. Data is only available as of {opens.index[0]} and your first training date is {start_trains[0]}")
+        st.stop()  # Stops the Streamlit script to avoid further errors
     start_date = st.date_input("Backtest start date", value=datetime.today() - timedelta(days=365))
     end_date = st.date_input("Backtest end date", value=datetime.today())
 with tab3:
