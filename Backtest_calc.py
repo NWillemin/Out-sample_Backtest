@@ -30,7 +30,7 @@ def run_backtest(config):
     last_weights = config['starting_weights']
     cst_last_weights = config['stable_starting_weights']
     benchmark = config['benchmark']
-    initial_value = config['intial_value']
+    initial_value = config['initial_value']
     bl_params = config["black_litterman_params"]
     bl_risk_aversion = bl_params.get("risk_aversion")
     tau = bl_params.get("tau")
