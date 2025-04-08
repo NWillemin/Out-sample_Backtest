@@ -271,19 +271,18 @@ with tab4:
         # Save results to file for current user
         user = st.session_state.get("user")
         if user:
-            if st.button("Save results"):
-                os.makedirs(f"results/{user}", exist_ok=True)
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                filename = f"results/{user}/backtest_{timestamp}.pkl"
-            
-                with open(filename, "wb") as f:
-                    pickle.dump({
-                        "config": config,
-                        "portfolio_value": portfolio_value,
-                        "real_weights": real_weights,
-                        "metrics": (avg_returns, vol, sharpe, sortino, omega, max_dd, cvar),
-                        "timestamp": timestamp,
-                    }, f)
+            os.makedirs(f"results/{user}", exist_ok=True)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"results/{user}/backtest_{timestamp}.pkl"
+        
+            with open(filename, "wb") as f:
+                pickle.dump({
+                    "config": config,
+                    "portfolio_value": portfolio_value,
+                    "real_weights": real_weights,
+                    "metrics": (avg_returns, vol, sharpe, sortino, omega, max_dd, cvar),
+                    "timestamp": timestamp,
+                }, f)
                 st.success(f"✅ Results saved as {filename}")
     if "user" in st.session_state:
         user = st.session_state["user"]
