@@ -6,7 +6,6 @@ import scipy
 from scipy.optimize import minimize
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from IPython.display import display
 from sklearn.covariance import LedoitWolf
 import matplotlib.pyplot as plt
 from performance_analysis import compute_metrics, plot_cumulative_returns, plot_weight_evolution, plot_average_weights
