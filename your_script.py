@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from sklearn.covariance import LedoitWolf
 import matplotlib.pyplot as plt
+import os
+import pickle
 from performance_analysis import compute_metrics, plot_cumulative_returns, plot_weight_evolution, plot_average_weights
 from Backtest_calc import run_backtest
 # Parameters
@@ -259,7 +261,6 @@ with tab4:
         user = st.session_state.get("user")
         if user:
             if st.button("Save results"):
-                import os, pickle
                 os.makedirs(f"results/{user}", exist_ok=True)
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 filename = f"results/{user}/backtest_{timestamp}.pkl"
