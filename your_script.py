@@ -13,11 +13,21 @@ import pickle
 from performance_analysis import compute_metrics, plot_cumulative_returns, plot_weight_evolution, plot_average_weights
 from Backtest_calc import run_backtest
 # Parameters
-username = st.text_input("Username")
-if st.button("Login"):
-    st.session_state["user"] = username
-    st.success(f"Welcome, {username}!")
 st.title("Customizable Backtesting Configuration")
+
+if "user" not in st.session_state:
+    st.subheader("🔐 Login")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    
+    if st.button("Login"):
+        if username and password:
+            st.session_state["user"] = username
+            st.success(f"Welcome, {username}!")
+        else:
+            st.error("Please enter both username and password.")
+    
+    st.stop()
 tab1, tab2, tab3, tab4 = st.tabs(["Assets", "Settings", "Objectives", "Results"])
 with tab1:
     st.header("1. Asset Configuration")
