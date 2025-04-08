@@ -163,6 +163,7 @@ with tab4:
         benchmark_weights = np.array(benchmark_weights)
     else:
         benchmark_weights = np.ones(num_assets)/num_assets
+    initial_value = st.number_input("Initial investment", min_value=0.0, value=1000)
     st.header("10. Results")
     if st.button('Run Backtest'):
         config = {
@@ -184,6 +185,7 @@ with tab4:
             "stable_starting_weights": stable_starting_weights,
             "use_ledoit": use_ledoit,
             "shrinkage_method": shrinkage_method,
+            "initial_value": initial_value,
             "black_litterman_params": {
                 "risk_aversion": bl_risk_aversion if shrinkage_method == "black-litterman" else None,
                 "tau": tau if shrinkage_method == "black-litterman" else None,
