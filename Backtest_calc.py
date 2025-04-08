@@ -140,6 +140,7 @@ def run_backtest(config):
         exp_returns = np.exp(mu_p + 0.5 * sigma2_p) - 1
         port_var = (np.exp(sigma2_p) - 1) * np.exp(2 * mu_p + sigma2_p)
         return -exp_returns + risk_aversion/2*port_var
+        
     def objective_mv(weights, *args):
         avg_returns, cov_matrix, returns_type, risk_aversion = args
         exp_returns = np.dot(weights, avg_returns)
@@ -147,6 +148,7 @@ def run_backtest(config):
             exp_returns = np.exp(exp_returns)-1
         port_var = np.dot(weights.T, np.dot(cov_matrix, weights))
         return -exp_returns + risk_aversion/2*port_var
+        
     bounds = [(min_weights[t], max_weights[t]) for t in tickers]
     constraints = [{"type": "eq", "fun": lambda w: np.sum(w) - 1}]
     for ac, (min_ac, max_ac) in asset_class_constraints.items():
