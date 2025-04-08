@@ -70,7 +70,7 @@ with tab2:
     st.header("4. Rebalancing")
     rebalancing_unit = st.selectbox("Rebalancing unit", ["days", "weeks"])
     rebalancing_freq = st.number_input("Rebalancing frequency", min_value=1, value=4)
-    start_date = st.date_input("Backtest start date", value=datetime.today() - timedelta(days=365), min_value=min_start)
+    start_date = st.date_input("Backtest start date", value=datetime.today() - timedelta(days=365))
     end_date = st.date_input("Backtest end date", value=datetime.today())
 with tab3:
     st.header("5. Constraints")
