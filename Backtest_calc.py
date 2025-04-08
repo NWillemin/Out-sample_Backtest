@@ -123,7 +123,7 @@ def run_backtest(config):
         port_std = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
         if port_std == 0:
             return np.inf
-        return -exp_returns / port_std
+        return -exp_returns/port_std
 
     def objective_exp_sharpe(weights, *args):
         avg_returns, cov_matrix = args
@@ -139,7 +139,7 @@ def run_backtest(config):
         sigma2_p = np.dot(weights.T, np.dot(cov_matrix, weights))
         exp_returns = np.exp(mu_p + 0.5 * sigma2_p) - 1
         port_var = (np.exp(sigma2_p) - 1) * np.exp(2 * mu_p + sigma2_p)
-        return -exp_returns + risk_aversion/2*port_var
+        return -exp_returns+risk_aversion/2*port_var
         
     def objective_mv(weights, *args):
         avg_returns, cov_matrix, returns_type, risk_aversion = args
@@ -147,7 +147,7 @@ def run_backtest(config):
         if returns_type == 'logarithmic':
             exp_returns = np.exp(exp_returns)-1
         port_var = np.dot(weights.T, np.dot(cov_matrix, weights))
-        return -exp_returns + risk_aversion/2*port_var
+        return -exp_returns+risk_aversion/2*port_var
         
     bounds = [(min_weights[t], max_weights[t]) for t in tickers]
     constraints = [{"type": "eq", "fun": lambda w: np.sum(w) - 1}]
