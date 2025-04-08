@@ -89,7 +89,7 @@ def run_backtest(config):
     no_rb = (et_date-st_date).days//(rebalancing_freq*rb_dic[rebalancing_unit])
     start_trains = [st_date-relativedelta(**{lookback_unit: lookback_period})+relativedelta(days=1)+relativedelta(**{rebalancing_unit: rebalancing_freq})*x for x in range(no_rb)]
     if start_trains[0] < valid_index[0]:
-        st.error(f"🚨 First rebalancing date ({first_rebalancing}) is too early. Please select a backtest start date that is later than {valid_index[0]+relativedelta(**{lookback_unit: lookback_period})} or reduce the lookback.")
+        st.error(f"🚨 First rebalancing date ({st_date}) is too early. Please select a backtest start date that is later than {valid_index[0]+relativedelta(**{lookback_unit: lookback_period})} or reduce the lookback.")
         st.stop()
     start_trains = [returns.index[returns.index >= date].min() for date in start_trains]
     rb_dates = [st_date+relativedelta(**{rebalancing_unit: rebalancing_freq})*x for x in range(no_rb)]
