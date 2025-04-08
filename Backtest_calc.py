@@ -5,7 +5,6 @@ import scipy
 from scipy.optimize import minimize
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from IPython.display import display
 from sklearn.covariance import LedoitWolf
 import matplotlib.pyplot as plt
 def run_backtest(config):
