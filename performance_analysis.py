@@ -33,12 +33,17 @@ def compute_metrics(returns, rf):
 
     return avg_returns, vol, sharpe_ratio, sortino, omega, max_DD, cvar
 
-def plot_cumulative_returns(portfolio_value):
-    fig, ax = plt.subplots()
-    portfolio_value.plot(ax=ax, title="Cumulative Portfolio Return")
-    ax.set_ylabel("Portfolio Value")
+def plot_cumulative_returns(portfolio_value, portfolio_value_bench=None):
+    fig, ax = plt.subplots(figsize=(10,5))
+    portfolio_value.plot(ax=ax, label="Portfolio", linewidth=2)
+    if portfolio_value_bench is not None:
+        portfolio_value_bench.plot(ax=ax, label="Benchmark", linestyle='--', linewidth=2)
+        ax.set_title("Portfolio vs. Benchmark Value Over Time")
+    else:
+        ax.set_title("Portfolio Value Over Time")
+    ax.set_ylabel("Value")
     ax.set_xlabel("Date")
-    ax.grid(True)
+    ax.grid(True, linestyle='--', alpha=0.6)
     return fig
 
 def plot_weight_evolution(weights_pct):
@@ -50,14 +55,39 @@ def plot_weight_evolution(weights_pct):
     ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1))
     ax.set_ylim(0, 1)
     ax.grid(True, linestyle='--', alpha=0.5)
+    fig.tight_layout()
     return fig
 
-def plot_average_weights(real_weights: pd.DataFrame):
+def plot_average_weights(real_weights: pd.DataFrame, real_weights_bench: pd.DataFrame = None):
     avg_weights = real_weights.mean()
-    fig, ax = plt.subplots(figsize=(8, 4))
-    avg_weights.plot(kind='bar', ax=ax, title="Average Portfolio Weights Over Period")
-    ax.set_ylabel("Average Weight")
-    ax.set_xlabel("Asset")
-    ax.set_ylim(0, 1)
-    ax.grid(axis='y', linestyle='--', alpha=0.5)
+
+    if real_weights_bench is not None:
+        avg_weights_bench = real_weights_bench.mean()
+        
+        # Align and combine both
+        combined = pd.DataFrame({
+            "Portfolio": avg_weights,
+            "Benchmark": avg_weights_bench
+        })
+
+        fig, ax = plt.subplots(figsize=(10, 5))
+        combined.plot(kind='bar', ax=ax, width=0.75)
+        ax.set_title("Average Portfolio vs. Benchmark Weights")
+        ax.set_ylabel("Average Weight")
+        ax.set_xlabel("Asset")
+        ax.set_ylim(0, 1)
+        ax.grid(axis='y', linestyle='--', alpha=0.5)
+        ax.legend(loc='upper right')
+
+    else:
+        fig, ax = plt.subplots(figsize=(8, 4))
+        avg_weights.plot(kind='bar', ax=ax)
+        ax.set_title("Average Portfolio Weights Over Period")
+        ax.set_ylabel("Average Weight")
+        ax.set_xlabel("Asset")
+        ax.set_ylim(0, 1)
+        ax.grid(axis='y', linestyle='--', alpha=0.5)
+
+    fig.tight_layout()
     return fig
+
