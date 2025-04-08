@@ -205,9 +205,7 @@ with tab4:
             returns_bench = np.log(portfolio_value_bench/portfolio_value_bench.shift(1)).dropna()
         
 
-        fig = plot_cumulative_returns(portfolio_value, portfolio_value_bench)
-        fig1 = plot_weight_evolution(real_weights)
-        fig2 = plot_average_weights(real_weights)
+
         avg_returns, vol, sharpe, sortino, omega, max_dd, cvar = compute_metrics(returns, rf)
         bench_avg, bench_vol, bench_sharpe, bench_sortino, bench_omega, bench_max_dd, bench_cvar = compute_metrics(returns_bench, rf)
         col1, col2 = st.columns(2)
@@ -232,11 +230,22 @@ with tab4:
             st.write(f"CVaR: {bench_cvar:.2%}")
 
         st.subheader("Performance Chart")
+        show_benchmark = st.checkbox("Compare with benchmark", value=True)
+        if show_benchmark:
+            fig = plot_cumulative_returns(portfolio_value, portfolio_value_bench)
+        else:
+            fig = plot_cumulative_returns(portfolio_value)
         st.pyplot(fig)
 
         st.subheader("Portfolio Allocation over time")
+        fig1 = plot_weight_evolution(real_weights)
         st.pyplot(fig1)
 
         st.subheader("Average Weight of each Asset")
+        show_benchmark2 = st.checkbox("Compare with benchmark", value=True)
+        if show_benchmark2:
+            fig2 = plot_average_weights(real_weights, real_weights_bench)
+        else:
+            fig2 = plot_average_weights(real_weights)
         st.pyplot(fig2)
     
