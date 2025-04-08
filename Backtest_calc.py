@@ -317,6 +317,7 @@ def run_backtest(config):
     portfolio_holdings_bench = portfolio_holdings.copy()
     portfolio_value_bench = portfolio_value.copy()
     real_weights_bench = real_weights.copy()
+    weights_dict_bench = {rb_date: benchmark for rb_date in rb_dates}
     for i, rb_date in enumerate(rb_dates):
         if i > 0:
             last_value = (portfolio_holdings.iloc[i-1] * closes_perf.loc[rb_date]).sum()
