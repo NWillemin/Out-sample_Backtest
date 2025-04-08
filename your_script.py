@@ -154,7 +154,7 @@ with tab4:
     st.header("9. Performance Evaluation")
     return_type_perf = st.selectbox("Return type used for the computation of the portfolio's performance metrics", ["arithmetic", "logarithmic"])
     rf = st.number_input("Annual risk-free rate", min_value=0.0, value=0.01)
-    ew_benchmark = st.checkbox("Use the equally-weighted portfolio as benchmark")
+    ew_benchmark = st.checkbox("Use the equally-weighted portfolio as benchmark", value=True)
     if ew_benchmark == False:
         benchmark_weights = []
         for i in range(num_assets):
@@ -163,7 +163,7 @@ with tab4:
         benchmark_weights = np.array(benchmark_weights)
     else:
         benchmark_weights = np.ones(num_assets)/num_assets
-    initial_value = st.number_input("Initial investment", min_value=0.0, value=1000)
+    initial_value = st.number_input("Initial investment", min_value=0, value=1000)
     st.header("10. Results")
     if st.button('Run Backtest'):
         config = {
