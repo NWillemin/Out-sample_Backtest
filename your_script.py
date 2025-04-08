@@ -18,16 +18,16 @@ st.title("Customizable Backtesting Configuration")
 if "user" not in st.session_state:
     st.subheader("🔐 Login")
     username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
     
     if st.button("Login"):
-        if username and password:
+        if username:
             st.session_state["user"] = username
             st.success(f"Welcome, {username}!")
         else:
-            st.error("Please enter both username and password.")
-    
+            st.error("Please enter a username.")
+                     
     st.stop()
+    
 tab1, tab2, tab3, tab4 = st.tabs(["Assets", "Settings", "Objectives", "Results"])
 with tab1:
     st.header("1. Asset Configuration")
