@@ -29,6 +29,8 @@ def run_backtest(config):
     mv_risk_aversion = config["mean_variance_risk_aversion"]
     last_weights = config['starting_weights']
     cst_last_weights = config['stable_starting_weights']
+    benchmark = config['benchmark']
+    initial_value = config['intial_value']
     bl_params = config["black_litterman_params"]
     bl_risk_aversion = bl_params.get("risk_aversion")
     tau = bl_params.get("tau")
@@ -301,11 +303,15 @@ def run_backtest(config):
     portfolio_holdings = pd.DataFrame(index=rb_dates, columns=closes_perf.columns)
     portfolio_value = pd.Series(index=closes_perf.loc[rb_dates[0]:end_tests[-1]].index, dtype=float)
     real_weights = pd.DataFrame(index=closes_perf.loc[rb_dates[0]:end_tests[-1]].index, columns=closes_perf.columns)
-    last_value = float(10000)
-
+    last_value = float(initial_value)
+    last_value_bench = float(initial_value)
+    portfolio_holdings_bench = portfolio_holdings.copy()
+    portfolio_value_bench = portfolio_value.copy()
+    real_weights_bench = real_weights.copy()
     for i, rb_date in enumerate(rb_dates):
         if i > 0:
             last_value = (portfolio_holdings.iloc[i-1] * closes_perf.loc[rb_date]).sum()
+            last_value_bench = (portfolio_holdings_bench.iloc[i-1] * closes_perf.loc[rb_date]).sum()
 
         # Compute asset holdings based on portfolio weights
         temp_assets = (last_value * weights_dict[rb_date]) / closes_perf.loc[rb_date]
@@ -314,6 +320,18 @@ def run_backtest(config):
 
         # Compute portfolio value over test period
         portfolio_value.loc[rb_date:end_tests[i]] = (temp_assets * closes_perf.loc[rb_date:end_tests[i]]).sum(axis=1)
-        real_weights.loc[rb_date:end_tests[i]] = (closes_perf.loc[rb_date:end_tests[i]].mul(temp_assets, axis=1).div(portfolio_value.loc[rb_date:end_tests[i]], axis=0))
-    return portfolio_holdings, real_weights, portfolio_value
+        real_weights.loc[rb_date:end_tests[i]] = closes_perf.loc[rb_date:end_tests[i]].mul(temp_assets, axis=1).div(portfolio_value.loc[rb_date:end_tests[i]], axis=0)
+        temp_assets_bench = (last_value_bench * weights_dict_bench[rb_date]) / closes_perf.loc[rb_date]
+        portfolio_holdings_bench.iloc[i] = temp_assets_bench
+    
+        portfolio_value_bench.loc[rb_date:end_tests[i]] = (
+            closes_perf.loc[rb_date:end_tests[i]].mul(temp_assets_bench, axis=1).sum(axis=1)
+        )
+    
+        real_weights_bench.loc[rb_date:end_tests[i]] = (
+            closes_perf.loc[rb_date:end_tests[i]]
+            .mul(temp_assets_bench, axis=1)
+            .div(portfolio_value_bench.loc[rb_date:end_tests[i]], axis=0)
+        )
+    return portfolio_holdings, real_weights, portfolio_value, portfolio_holdings_bench, real_weights_bench, portfolio_value_bench
 
