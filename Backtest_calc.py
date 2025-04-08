@@ -302,6 +302,9 @@ def run_backtest(config):
                     bounds=bounds,
                     constraints=constraints
                 )
+            if not result.success:
+                st.warning(f"⚠️ Optimization failed at {rb_date}: {result.message}")
+
             weights_dict[rb_date] = result.x
             if cst_last_weights==False:
                 last_weights = result.x
