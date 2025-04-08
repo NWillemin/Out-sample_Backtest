@@ -253,8 +253,7 @@ with tab4:
             st.pyplot(fig1_bench)
 
         st.subheader("Average Weight of each Asset")
-        show_benchmark2 = st.checkbox("Compare with benchmark", value=True)
-        if show_benchmark2:
+        if show_benchmark:
             fig2 = plot_average_weights(real_weights, real_weights_bench)
         else:
             fig2 = plot_average_weights(real_weights)
