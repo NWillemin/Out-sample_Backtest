@@ -5,3 +5,5 @@ matplotlib
 scipy
 yfinance
 scikit-learn
+os
+pickle
