@@ -15,22 +15,16 @@ from Backtest_calc import run_backtest
 # Parameters
 st.title("Customizable Backtesting Configuration")
 
-if "logged_in" not in st.session_state:
-    st.session_state["logged_in"] = False
-
-if not st.session_state["logged_in"]:
+if "user" not in st.session_state:
     st.subheader("🔐 Login")
     username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
     
     if st.button("Login"):
-        if username and password:
+        if username:
             st.session_state["user"] = username
-            st.session_state["logged_in"] = True
-            st.success(f"✅ Welcome, {username}!")
-            st.experimental_rerun()
+            st.success(f"Welcome, {username}! Please click a second time to log in")
         else:
-            st.error("Please enter both username and password.")
+            st.error("Please enter a username.")
     
     st.stop()
 tab1, tab2, tab3, tab4 = st.tabs(["Assets", "Settings", "Objectives", "Results"])
