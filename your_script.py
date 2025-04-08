@@ -61,7 +61,7 @@ with tab2:
     st.header("3. Returns and Rolling Window")
     return_type = st.selectbox("Return type", ["arithmetic", "logarithmic"])
     lookback_unit = st.selectbox("Lookback unit", ["days", "weeks"])
-    lookback_period = st.number_input("Lookback period", min_value=1, value=4)
+    lookback_period = st.number_input("Lookback period", min_value=1, value=50)
 
     st.header("4. Rebalancing")
     rebalancing_unit = st.selectbox("Rebalancing unit", ["days", "weeks"])
