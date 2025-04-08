@@ -274,22 +274,22 @@ with tab4:
                     }, f)
                 st.success(f"✅ Results saved as {filename}")
     if "user" in st.session_state:
-    user = st.session_state["user"]
-    user_folder = f"results/{user}"
+        user = st.session_state["user"]
+        user_folder = f"results/{user}"
     
-    if os.path.exists(user_folder):
-        st.subheader("📂 View Past Backtests")
-        files = sorted(os.listdir(user_folder), reverse=True)
-
-        selected_file = st.selectbox("Select a past backtest to view:", files)
-
-        if selected_file:
-            with open(f"{user_folder}/{selected_file}", "rb") as f:
-                past = pickle.load(f)
-
-            st.markdown(f"**Backtest run at:** {past['timestamp']}")
-            st.write("📊 **Performance metrics**", past["metrics"])
-            st.line_chart(past["portfolio_value"])
+        if os.path.exists(user_folder):
+            st.subheader("📂 View Past Backtests")
+            files = sorted(os.listdir(user_folder), reverse=True)
+    
+            selected_file = st.selectbox("Select a past backtest to view:", files)
+    
+            if selected_file:
+                with open(f"{user_folder}/{selected_file}", "rb") as f:
+                    past = pickle.load(f)
+    
+                st.markdown(f"**Backtest run at:** {past['timestamp']}")
+                st.write("📊 **Performance metrics**", past["metrics"])
+                st.line_chart(past["portfolio_value"])
 
 
 
