@@ -272,8 +272,9 @@ with tab4:
         user = st.session_state.get("user")
         if user:
             os.makedirs(f"results/{user}", exist_ok=True)
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"results/{user}/backtest_{timestamp}.pkl"
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            summary_name = f"{timestamp}.pkl"
+            filename = f"results/{user}/{summary_name}"
         
             with open(filename, "wb") as f:
                 pickle.dump({
@@ -299,7 +300,12 @@ with tab4:
                     past = pickle.load(f)
     
                 st.markdown(f"**Backtest run at:** {past['timestamp']}")
-                st.write("📊 **Performance metrics**", past["metrics"])
+                metrics_names = ["Avg Return", "Volatility", "Sharpe", "Sortino", "Omega", "Max Drawdown", "CVaR"]
+                metrics_values = past["metrics"]
+                
+                st.markdown("📊 **Performance Metrics**")
+                for name, value in zip(metrics_names, metrics_values):
+                    st.write(f"{name}: {value:.2%}" if "Return" in name or "Volatility" in name or "CVar" in name or "Drawdown" in name else f"{name}: {value:.2f}")
                 st.line_chart(past["portfolio_value"])
 
 
