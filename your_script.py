@@ -11,6 +11,10 @@ import matplotlib.pyplot as plt
 from performance_analysis import compute_metrics, plot_cumulative_returns, plot_weight_evolution, plot_average_weights
 from Backtest_calc import run_backtest
 # Parameters
+username = st.text_input("Username")
+if st.button("Login"):
+    st.session_state["user"] = username
+    st.success(f"Welcome, {username}!")
 st.title("Customizable Backtesting Configuration")
 tab1, tab2, tab3, tab4 = st.tabs(["Assets", "Settings", "Objectives", "Results"])
 with tab1:
@@ -251,4 +255,42 @@ with tab4:
         st.subheader("Average Weight of each Asset")
         fig2 = plot_average_weights(real_weights, real_weights_bench)
         st.pyplot(fig2)
+        # Save results to file for current user
+        user = st.session_state.get("user")
+        if user:
+            if st.button("Save results"):
+                import os, pickle
+                os.makedirs(f"results/{user}", exist_ok=True)
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                filename = f"results/{user}/backtest_{timestamp}.pkl"
+            
+                with open(filename, "wb") as f:
+                    pickle.dump({
+                        "config": config,
+                        "portfolio_value": portfolio_value,
+                        "real_weights": real_weights,
+                        "metrics": (avg_returns, vol, sharpe, sortino, omega, max_dd, cvar),
+                        "timestamp": timestamp,
+                    }, f)
+                st.success(f"✅ Results saved as {filename}")
+    if "user" in st.session_state:
+    user = st.session_state["user"]
+    user_folder = f"results/{user}"
+    
+    if os.path.exists(user_folder):
+        st.subheader("📂 View Past Backtests")
+        files = sorted(os.listdir(user_folder), reverse=True)
+
+        selected_file = st.selectbox("Select a past backtest to view:", files)
+
+        if selected_file:
+            with open(f"{user_folder}/{selected_file}", "rb") as f:
+                past = pickle.load(f)
+
+            st.markdown(f"**Backtest run at:** {past['timestamp']}")
+            st.write("📊 **Performance metrics**", past["metrics"])
+            st.line_chart(past["portfolio_value"])
+
+
+
     
