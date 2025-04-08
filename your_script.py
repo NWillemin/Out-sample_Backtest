@@ -15,6 +15,10 @@ st.title("Customizable Backtesting Configuration")
 tab1, tab2, tab3, tab4 = st.tabs(["Assets", "Settings", "Objectives", "Results"])
 with tab1:
     st.header("1. Asset Configuration")
+    st.markdown(
+        ":information_source: **Note**: Tickers must be valid symbols from [Yahoo Finance](https://finance.yahoo.com), "
+        "e.g., `AAPL`, `GOOGL`, `SPY`, or `BTC-USD`."
+    )
     num_assets = st.number_input("Number of assets", min_value=1, step=1, value=1)
     num_exchanges = st.number_input("Number of exchanges", min_value=1, step=1, value=1)
     num_asset_classes = st.number_input("Number of asset classes", min_value=1, step=1, value=1)
@@ -150,7 +154,16 @@ with tab4:
     st.header("9. Performance Evaluation")
     return_type_perf = st.selectbox("Return type used for the computation of the portfolio's performance metrics", ["arithmetic", "logarithmic"])
     rf = st.number_input("Annual risk-free rate", min_value=0.0, value=0.01)
-    st.header("10. Summary")
+    ew_benchmark = st.checkbox("Use the equally-weighted portfolio as benchmark")
+    if ew_benchmark == False:
+        benchmark_weights = []
+        for i in range(num_assets):
+            benchmark_weight = st.number_input(f"Market weight for {tickers[i]}", min_value=0.0, max_value=1.0, value=equal_weight, step=0.01, key=f"bench_weight_{i}")
+            benchmark_weights.append(benchmark_weight)
+        benchmark_weights = np.array(benchmark_weights)
+    else:
+        benchmark_weights = np.ones(num_assets)/num_assets
+    st.header("10. Results")
     if st.button('Run Backtest'):
         config = {
             "tickers": tickers,
@@ -179,28 +192,44 @@ with tab4:
             "objective": objective,
             "cov_matrix_type": cov_matrix_type if objective != 'sortino' else None,
             "mean_variance_risk_aversion": mv_risk_aversion if objective in ['exp_mean-variance', 'mean-variance'] else None,
+            "benchmark": benchmark_weights
         }
-        portfolio_holdings, real_weights, portfolio_value = run_backtest(config)
+        portfolio_holdings, real_weights, portfolio_value, portfolio_holdings_bench, real_weights_bench, portfolio_value_bench = run_backtest(config)
         portfolio_value = portfolio_value.astype(float)
+        portfolio_value_bench = portfolio_value_bench.astype(float)
         if return_type_perf == 'arithmetic':
             returns = portfolio_value.pct_change().dropna()
+            returns_bench = portfolio_value_bench.pct_change().dropna()
         elif return_type_perf == 'logarithmic':
             returns = np.log(portfolio_value/portfolio_value.shift(1)).dropna()
+            returns_bench = np.log(portfolio_value_bench/portfolio_value_bench.shift(1)).dropna()
         
 
-        fig = plot_cumulative_returns(portfolio_value)
+        fig = plot_cumulative_returns(portfolio_value, portfolio_value_bench)
         fig1 = plot_weight_evolution(real_weights)
         fig2 = plot_average_weights(real_weights)
         avg_returns, vol, sharpe, sortino, omega, max_dd, cvar = compute_metrics(returns, rf)
-
-        st.subheader("Performance Metrics")
-        st.write(f"Average Return: {avg_returns:.2%}")
-        st.write(f"Volatility: {vol:.2%}")
-        st.write(f"Sharpe Ratio: {sharpe:.2f}")
-        st.write(f"Sortino Ratio: {sortino:.2f}")
-        st.write(f"Omega Ratio: {omega:.2f}")
-        st.write(f"Max Drawdown: {max_dd:.2%}")
-        st.write(f"CVaR: {cvar:.2%}")
+        bench_avg, bench_vol, bench_sharpe, bench_sortino, bench_omega, bench_max_dd, bench_cvar = compute_metrics(returns_bench, rf)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("📈 Portfolio Performance")
+            st.write(f"Average Return: {avg_returns:.2%}")
+            st.write(f"Volatility: {vol:.2%}")
+            st.write(f"Sharpe Ratio: {sharpe:.2f}")
+            st.write(f"Sortino Ratio: {sortino:.2f}")
+            st.write(f"Omega Ratio: {omega:.2f}")
+            st.write(f"Max Drawdown: {max_dd:.2%}")
+            st.write(f"CVaR: {cvar:.2%}")
+        
+        with col2:
+            st.subheader("🎯 Benchmark Performance")
+            st.write(f"Average Return: {bench_avg:.2%}")
+            st.write(f"Volatility: {bench_vol:.2%}")
+            st.write(f"Sharpe Ratio: {bench_sharpe:.2f}")
+            st.write(f"Sortino Ratio: {bench_sortino:.2f}")
+            st.write(f"Omega Ratio: {bench_omega:.2f}")
+            st.write(f"Max Drawdown: {bench_max_dd:.2%}")
+            st.write(f"CVaR: {bench_cvar:.2%}")
 
         st.subheader("Performance Chart")
         st.pyplot(fig)
