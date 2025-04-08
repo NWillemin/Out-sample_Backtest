@@ -16,6 +16,9 @@ from Backtest_calc import run_backtest
 st.title("Customizable Backtesting Configuration")
 
 if "user" not in st.session_state:
+    st.session_state["logged_in"] = False
+
+if not st.session_state["logged_in"]:
     st.subheader("🔐 Login")
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
@@ -23,7 +26,8 @@ if "user" not in st.session_state:
     if st.button("Login"):
         if username and password:
             st.session_state["user"] = username
-            st.success(f"Welcome, {username}!")
+            st.session_state["logged_in"] = True
+            st.experimental_rerun()  # <== forces a clean rerun now that you're logged in
         else:
             st.error("Please enter both username and password.")
     
