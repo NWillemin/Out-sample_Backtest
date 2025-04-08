@@ -237,9 +237,18 @@ with tab4:
             fig = plot_cumulative_returns(portfolio_value)
         st.pyplot(fig)
 
-        st.subheader("Portfolio Allocation over time")
-        fig1 = plot_weight_evolution(real_weights)
-        st.pyplot(fig1)
+        st.subheader("Weight Allocation Over Time")
+        tab_weights_port, tab_weights_bench = st.tabs(["Portfolio", "Benchmark"])
+        
+        with tab_weights_port:
+            st.markdown("### Portfolio Weights Over Time")
+            fig1 = plot_weight_evolution(real_weights)
+            st.pyplot(fig1)
+        
+        with tab_weights_bench:
+            st.markdown("### Benchmark Weights Over Time")
+            fig1_bench = plot_weight_evolution(real_weights_bench)
+            st.pyplot(fig1_bench)
 
         st.subheader("Average Weight of each Asset")
         show_benchmark2 = st.checkbox("Compare with benchmark", value=True)
