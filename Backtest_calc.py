@@ -37,8 +37,14 @@ def run_backtest(config):
     market_weights = bl_params.get("market_weights")
     opens1 = yf.download(tickers=tickers, period='max', interval=interval)["Open"]
     closes1 = yf.download(tickers=tickers, period='max', interval=interval)["Close"]
-    opens = opens1.loc[opens1.dropna().index[0]:].copy()
-    closes = closes1.loc[closes1.dropna().index[0]:].copy()
+    valid_index = opens1.dropna().index
+
+    if valid_index.empty:
+        st.error("🚨 No data available. Please check your tickers and interval, and ensure all fields are filled in.")
+        st.stop()  # Stops the Streamlit script to avoid further errors
+    else:
+        opens = opens1.loc[valid_index[0]:].copy()
+        closes = closes1.loc[valid_index[0]:].copy()
     if interval=='1d':
         opensd = opens.copy()
         closesd = closes.copy()
