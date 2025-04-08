@@ -156,10 +156,11 @@ with tab3:
     objective = objectives_dict[display_objective]
 
     if objective != "sortino":
-        cov_shrinkage_dict = {'None': 'none', 'Ledoit-Wolf': 'ledoit', display_shrinkage_method: 'shrinkage'}
         if shrinkage_method in ["none", "james-stein"]:
-            display_cov_matrix_type = st.selectbox("Covariance shrinkage method", ['None', 'Ledoit-Wolf'])
+            cov_shrinkage_dict = {'None': 'none', 'Ledoit-Wolf': 'ledoit'}
+            display_cov_matrix_type = st.selectbox("Covariance shrinkage method", list(cov_shrinkage_dict.keys()))
         else:
+            cov_shrinkage_dict = {'None': 'none', 'Ledoit-Wolf': 'ledoit', display_shrinkage_method: 'shrinkage'}
             display_cov_matrix_type = st.selectbox("Covariance shrinkage method", list(cov_shrinkage_dict.keys()))
         
         cov_matrix_type = cov_shrinkage_dict[display_cov_matrix_type]
