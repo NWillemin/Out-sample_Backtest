@@ -17,7 +17,7 @@ st.title("Customizable Backtesting Configuration")
 
 if "user" not in st.session_state:
     st.subheader("🔐 Login")
-    username = st.text_input("Username", help=("You can enter any username, it will be used to store your results")
+    username = st.text_input("Username", help=("You can enter any username, it will be used to store your results"))
     if st.button("Login"):
         if username:
             st.session_state["user"] = username
