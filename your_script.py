@@ -22,7 +22,7 @@ if "user" not in st.session_state:
     if st.button("Login"):
         if username:
             st.session_state["user"] = username
-            st.success(f"Welcome, {username}!")
+            st.success(f"Welcome, {username}! Please click a second time to log in")
         else:
             st.error("Please enter a username.")
                      
