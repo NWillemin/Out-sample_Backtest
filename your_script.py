@@ -301,11 +301,14 @@ with tab4:
                 st.markdown(f"**Backtest run at:** {past['timestamp']}")
                 metrics_names = ["Avg Return", "Volatility", "Sharpe", "Sortino", "Omega", "Max Drawdown", "CVaR"]
                 metrics_values = past["metrics"]
+                settings = past['config']
                 
                 st.markdown("📊 **Performance Metrics**")
                 for name, value in zip(metrics_names, metrics_values):
                     st.write(f"{name}: {value:.2%}" if "Return" in name or "Volatility" in name or "CVar" in name or "Drawdown" in name else f"{name}: {value:.2f}")
                 st.line_chart(past["portfolio_value"])
+                st.markdown("Configuration")
+                st.write(settings)
 
 
 
