@@ -39,7 +39,7 @@ with tab1:
         "e.g., `AAPL`, `GOOGL`, `SPY`, or `BTC-USD`."
     )
     num_assets = st.number_input("Number of assets", min_value=1, step=1, value=1)
-    num_exchanges = st.number_input("Number of exchanges", min_value=1, step=1, value=1)
+    num_exchanges = st.number_input("Number of exchanges", min_value=1, step=1, value=1, help="Only useful if some of your assets have differing trading days and you want to customize how the optimizer treats those days")
     num_asset_classes = st.number_input("Number of asset classes", min_value=1, step=1, value=1)
     suggested_classes = ["Stocks", "Bonds", "Crypto", "Commodities", "Real Estate", "Cash", "Volatility"]
     selected_suggested = st.multiselect(
@@ -91,12 +91,27 @@ with tab2:
     interval = st.selectbox("Data interval", ["1d", "1wk"])
     ffill_exchanges = []
     if interval=='1d':
-        na_handling_method = st.selectbox("NaN handling method", ["dropna", "ffill"])
+        na_handling_method = st.selectbox(
+            "NaN handling method", 
+            ["dropna", "ffill"], 
+            help=(
+                "Only relevant if assets have differing trading days (e.g., from different exchanges). "
+                "`dropna` removes any day where at least one asset has missing data. "
+                "`ffill` fills forward missing prices — you can then specify which exchanges define 'valid' trading days."
+            )
+        )
 
         if na_handling_method == "ffill":
             st.markdown("#### Select exchanges to retain when forward-filling:")
             unique_exchanges = list(set(exchanges))
-            ffill_exchanges = st.multiselect("Exchanges", unique_exchanges)
+            ffill_exchanges = st.multiselect(
+                "Exchanges used to define trading days for forward-filling:",
+                unique_exchanges,
+                help=(
+                    "Forward-fill will only be applied on days where these selected exchanges were active. "
+                    "Useful if some assets (e.g., crypto) trade every day, while others don’t."
+                )
+            )
     else:
         na_handling_method = None
     st.header("3. Returns and Rolling Window")
