@@ -218,6 +218,10 @@ with tab4:
     else:
         benchmark_weights = np.ones(num_assets)/num_assets
     initial_value = st.number_input("Initial investment", min_value=0, value=1000)
+    if "crypto" in asset_classes:
+        keep_all_days = st.checkbox("Keep the returns of Saturdays and Sundays (when only your crypto is trading) for the computation of the performance metrics")
+    else:
+        keep_all_days = True
     st.header("10. Results")
     if st.button('Run Backtest'):
         config = {
@@ -248,7 +252,8 @@ with tab4:
             "objective": objective,
             "cov_matrix_type": cov_matrix_type if objective != 'sortino' else None,
             "mean_variance_risk_aversion": mv_risk_aversion if objective in ['exp_mean-variance', 'mean-variance'] else None,
-            "benchmark": benchmark_weights
+            "benchmark": benchmark_weights,
+            "keep_all_days": keep_all_days,
         }
         portfolio_holdings, real_weights, portfolio_value, portfolio_holdings_bench, real_weights_bench, portfolio_value_bench = run_backtest(config)
         portfolio_value = portfolio_value.astype(float)
