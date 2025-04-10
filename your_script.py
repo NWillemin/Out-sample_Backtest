@@ -331,21 +331,23 @@ with tab4:
         
             if save_result:
                 custom_name = st.text_input("Enter a name for this backtest", placeholder="e.g. black_litterman_sharpe_ratio")
-                summary_name = f"{custom_name.strip().replace(' ', '_')}.pkl"
-        
-                os.makedirs(f"results/{user}", exist_ok=True)
-                filename = f"results/{user}/{summary_name}"
-        
-                with open(filename, "wb") as f:
-                    pickle.dump({
-                        "config": config,
-                        "portfolio_value": portfolio_value,
-                        "portfolio_value_bench": portfolio_value_bench,
-                        "real_weights": real_weights,
-                        "metrics": (avg_returns, vol, sharpe, sortino, omega, max_dd, cvar),
-                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    }, f)
-                    st.success(f"✅ Backtest saved as: `{summary_name}`")
+                if custom_name.strip() == "":
+                    st.warning("⚠️ Please enter a valid name.")
+                elif st.button("💾 Confirm and Save"):
+                    summary_name = f"{custom_name.strip().replace(' ', '_')}.pkl"
+                    os.makedirs(f"results/{user}", exist_ok=True)
+                    filename = f"results/{user}/{summary_name}"
+            
+                    with open(filename, "wb") as f:
+                        pickle.dump({
+                            "config": config,
+                            "portfolio_value": portfolio_value,
+                            "portfolio_value_bench": portfolio_value_bench,
+                            "real_weights": real_weights,
+                            "metrics": (avg_returns, vol, sharpe, sortino, omega, max_dd, cvar),
+                            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        }, f)
+                        st.success(f"✅ Backtest saved as: `{summary_name}`")
     if "user" in st.session_state:
         user = st.session_state["user"]
         user_folder = f"results/{user}"
