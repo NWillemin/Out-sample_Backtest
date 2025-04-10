@@ -44,6 +44,7 @@ def plot_cumulative_returns(portfolio_value, portfolio_value_bench=None):
     ax.set_ylabel("Value")
     ax.set_xlabel("Date")
     ax.grid(True, linestyle='--', alpha=0.6)
+    ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1))
     return fig
 
 def plot_weight_evolution(weights_pct):
