@@ -215,7 +215,7 @@ with tab4:
     else:
         benchmark_weights = np.ones(num_assets)/num_assets
     initial_value = st.number_input("Initial investment", min_value=0, value=1000)
-    if "crypto" in asset_classes:
+    if "Crypto" in asset_classes:
         keep_all_days = st.checkbox("Keep the returns of Saturdays and Sundays (when only your crypto is trading) for the computation of the performance metrics")
     else:
         keep_all_days = True
