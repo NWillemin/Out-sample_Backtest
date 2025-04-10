@@ -330,12 +330,8 @@ with tab4:
             save_result = st.checkbox("Save this backtest?", value=False)
         
             if save_result:
-                custom_name = st.text_input("Enter a name for this backtest (optional)", placeholder="e.g. black_litterman_sharpe_ratio")
-                if custom_name.strip() == "":
-                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    summary_name = f"{timestamp}.pkl"
-                else:
-                    summary_name = f"{custom_name.strip().replace(' ', '_')}.pkl"
+                custom_name = st.text_input("Enter a name for this backtest", placeholder="e.g. black_litterman_sharpe_ratio")
+                summary_name = f"{custom_name.strip().replace(' ', '_')}.pkl"
         
                 os.makedirs(f"results/{user}", exist_ok=True)
                 filename = f"results/{user}/{summary_name}"
@@ -344,6 +340,7 @@ with tab4:
                     pickle.dump({
                         "config": config,
                         "portfolio_value": portfolio_value,
+                        "portfolio_value_bench": portfolio_value_bench,
                         "real_weights": real_weights,
                         "metrics": (avg_returns, vol, sharpe, sortino, omega, max_dd, cvar),
                         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -371,7 +368,7 @@ with tab4:
                 st.markdown("📊 **Performance Metrics**")
                 for name, value in zip(metrics_names, metrics_values):
                     st.write(f"{name}: {value:.2%}" if "Return" in name or "Volatility" in name or "CVar" in name or "Drawdown" in name else f"{name}: {value:.2f}")
-                st.line_chart(past["portfolio_value"])
+                st.line_chart(past["portfolio_value"], past["portfolio_value_bench]")
                 st.markdown("Configuration")
                 st.write(settings)
 
