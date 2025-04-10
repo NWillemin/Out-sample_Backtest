@@ -17,6 +17,8 @@ st.title("Customizable Backtesting Configuration")
 
 if "user" not in st.session_state:
     st.subheader("🔐 Login")
+    st.info("You don’t need to create an account — just enter any username. "
+            "If it’s your first time, a profile will be created automatically.")
     username = st.text_input("Username")
     if st.button("Login"):
         if username:
@@ -37,6 +39,18 @@ with tab1:
     num_assets = st.number_input("Number of assets", min_value=1, step=1, value=1)
     num_exchanges = st.number_input("Number of exchanges", min_value=1, step=1, value=1)
     num_asset_classes = st.number_input("Number of asset classes", min_value=1, step=1, value=1)
+    st.markdown("### 🔖 Asset Class Naming")
+
+    default_names = ["Stocks", "Bonds", "Crypto", "Commodities", "Real Estate", "Cash"]
+    asset_class_labels = []
+    
+    for j in range(num_asset_classes):
+        label = st.text_input(
+            f"Name for asset class {j+1}",
+            value=default_names[j] if j < len(default_names) else f"Class {j+1}",
+            key=f"asset_class_label_{j}"
+        )
+        asset_class_labels.append(label)
     tickers = []
     exchanges = []
     asset_classes = []
@@ -54,9 +68,9 @@ with tab1:
         with col3:
             asset_class = st.selectbox(
                 f"Asset class for asset {i+1}",
-                options=[f"Class {j+1}" for j in range(num_asset_classes)],
+                options=asset_class_labels,
                 key=f"class_{i}"
-                )
+            )
         tickers.append(ticker)
         exchanges.append(exchange)
         asset_classes.append(asset_class)
@@ -109,6 +123,7 @@ with tab3:
         """
         Define the **initial portfolio weights** that will be used by the optimizer at the **first rebalancing date**.
         These weights act as an initial guess (`x0`) for the optimization process.
+        We recommend to use weights that meet the constraints you entered above.
         """
     )
     starting_weights = []
@@ -270,20 +285,31 @@ with tab4:
         # Save results to file for current user
         user = st.session_state.get("user")
         if user:
-            os.makedirs(f"results/{user}", exist_ok=True)
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            summary_name = f"{timestamp}.pkl"
-            filename = f"results/{user}/{summary_name}"
+            st.markdown("---")
+            st.subheader("💾 Save This Backtest")
         
-            with open(filename, "wb") as f:
-                pickle.dump({
-                    "config": config,
-                    "portfolio_value": portfolio_value,
-                    "real_weights": real_weights,
-                    "metrics": (avg_returns, vol, sharpe, sortino, omega, max_dd, cvar),
-                    "timestamp": timestamp,
-                }, f)
-                st.success(f"✅ Results saved as {filename}")
+            save_result = st.checkbox("Save this backtest?", value=False)
+        
+            if save_result:
+                custom_name = st.text_input("Enter a name for this backtest (optional)", placeholder="e.g. black_litterman_sharpe_ratio")
+                if custom_name.strip() == "":
+                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    summary_name = f"{timestamp}.pkl"
+                else:
+                    summary_name = f"{custom_name.strip().replace(' ', '_')}.pkl"
+        
+                os.makedirs(f"results/{user}", exist_ok=True)
+                filename = f"results/{user}/{summary_name}"
+        
+                with open(filename, "wb") as f:
+                    pickle.dump({
+                        "config": config,
+                        "portfolio_value": portfolio_value,
+                        "real_weights": real_weights,
+                        "metrics": (avg_returns, vol, sharpe, sortino, omega, max_dd, cvar),
+                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    }, f)
+                    st.success(f"✅ Backtest saved as: `{summary_name}`")
     if "user" in st.session_state:
         user = st.session_state["user"]
         user_folder = f"results/{user}"
