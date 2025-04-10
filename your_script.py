@@ -368,7 +368,7 @@ with tab4:
                 st.markdown("📊 **Performance Metrics**")
                 for name, value in zip(metrics_names, metrics_values):
                     st.write(f"{name}: {value:.2%}" if "Return" in name or "Volatility" in name or "CVar" in name or "Drawdown" in name else f"{name}: {value:.2f}")
-                st.line_chart(past["portfolio_value"], past["portfolio_value_bench]")
+                st.line_chart(past["portfolio_value"], past["portfolio_value_bench"])
                 st.markdown("Configuration")
                 st.write(settings)
 
