@@ -42,12 +42,23 @@ with tab1:
     num_exchanges = st.number_input("Number of exchanges", min_value=1, step=1, value=1)
     num_asset_classes = st.number_input("Number of asset classes", min_value=1, step=1, value=1)
     suggested_classes = ["Stocks", "Bonds", "Crypto", "Commodities", "Real Estate", "Cash", "Volatility"]
-    asset_class_labels = st.multiselect(
-        "Select or enter the asset classes you want to use:",
+    selected_suggested = st.multiselect(
+        "Select asset classes to use:",
         options=suggested_classes,
-        default=["Stocks", "Crypto"],
-        help="Pick from common asset classes or type in your own."
+        default=["Stocks", "Bonds"],
+        help="Pick from common classes"
     )
+    
+    # 2. Let users type in custom asset classes
+    custom_classes_input = st.text_input(
+        "Add custom asset classes (comma-separated)",
+        placeholder="e.g. AI, Green Energy, Healthcare",
+        help="Only useful if you want to set asset class constraints later"
+    )
+    
+    # 3. Combine both into a list
+    custom_classes = [cls.strip() for cls in custom_classes_input.split(",") if cls.strip()]
+    asset_class_labels = selected_suggested + custom_classes
     tickers = []
     exchanges = []
     asset_classes = []
