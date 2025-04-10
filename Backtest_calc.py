@@ -36,6 +36,7 @@ def run_backtest(config):
     bl_risk_aversion = bl_params.get("risk_aversion")
     tau = bl_params.get("tau")
     market_weights = bl_params.get("market_weights")
+    keep_all_days = config['keep_all_days']
     opens1 = yf.download(tickers=tickers, period='max', interval=interval)["Open"]
     closes1 = yf.download(tickers=tickers, period='max', interval=interval)["Close"]
     valid_index = opens1.dropna().index
@@ -313,8 +314,22 @@ def run_backtest(config):
     
    
     """ Simulates out-of-sample portfolio performance. """
-    opens_perf = opensd.ffill().dropna()
-    closes_perf = closesd.ffill().dropna()
+    if keep_all_days==True:
+        opens_perf = opensd.ffill().dropna()
+        closes_perf = closesd.ffill().dropna()
+    elif keep_all_days == False:
+        assets_to_ffill = [t for t, a in zip(tickers, asset_classes) if a.lower() != 'crypto']
+        if not assets_to_ffill:
+            st.warning("⚠️ No non-crypto assets found. All days will be retained.")
+            opens_perf = opensd.ffill().dropna()
+            closes_perf = closesd.ffill().dropna()
+        else:
+            mask = opensd[assets_to_ffill].notna().any(axis=1)
+            opens_perf = opensd.loc[mask]
+            closes_perf = closesd.loc[mask]
+            opens_perf = opens_perf.ffill().dropna()
+            closes_perf = closes_perf.ffill().dropna()
+
     portfolio_holdings = pd.DataFrame(index=rb_dates, columns=closes_perf.columns)
     portfolio_value = pd.Series(index=closes_perf.loc[rb_dates[0]:end_tests[-1]].index, dtype=float)
     real_weights = pd.DataFrame(index=closes_perf.loc[rb_dates[0]:end_tests[-1]].index, columns=closes_perf.columns)
