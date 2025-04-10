@@ -368,7 +368,13 @@ with tab4:
                 st.markdown("📊 **Performance Metrics**")
                 for name, value in zip(metrics_names, metrics_values):
                     st.write(f"{name}: {value:.2%}" if "Return" in name or "Volatility" in name or "CVar" in name or "Drawdown" in name else f"{name}: {value:.2f}")
-                st.pyplot(plot_cumulative_returns(past["portfolio_value"], past["portfolio_value_bench"]))
+                portfolio_value = past["portfolio_value"]
+                portfolio_value_bench = past.get("portfolio_value_bench")  # None if not saved
+                
+                if portfolio_value_bench is not None:
+                    st.pyplot(plot_cumulative_returns(portfolio_value, portfolio_value_bench))
+                else:
+                    st.pyplot(plot_cumulative_returns(portfolio_value))
                 st.markdown("Configuration")
                 st.write(settings)
 
