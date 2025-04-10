@@ -28,7 +28,9 @@ if "user" not in st.session_state:
             st.error("Please enter a username.")
                      
     st.stop()
-    
+tickers = []
+exchanges = []
+asset_classes = []  
 tab1, tab2, tab3, tab4 = st.tabs(["Assets", "Settings", "Objectives", "Results"])
 with tab1:
     st.header("1. Asset Configuration")
