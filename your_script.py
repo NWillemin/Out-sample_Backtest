@@ -28,9 +28,7 @@ if "user" not in st.session_state:
             st.error("Please enter a username.")
                      
     st.stop()
-tickers = []
-exchanges = []
-asset_classes = []  
+
 tab1, tab2, tab3, tab4 = st.tabs(["Assets", "Settings", "Objectives", "Results"])
 with tab1:
     st.header("1. Asset Configuration")
@@ -40,7 +38,6 @@ with tab1:
     )
     num_assets = st.number_input("Number of assets", min_value=1, step=1, value=1)
     num_exchanges = st.number_input("Number of exchanges", min_value=1, step=1, value=1, help="Only useful if some of your assets have differing trading days and you want to customize how the optimizer treats those days")
-    num_asset_classes = st.number_input("Number of asset classes", min_value=1, step=1, value=1)
     suggested_classes = ["Stocks", "Bonds", "Crypto", "Commodities", "Real Estate", "Cash", "Volatility"]
     selected_suggested = st.multiselect(
         "Select asset classes to use:",
@@ -52,7 +49,7 @@ with tab1:
     # 2. Let users type in custom asset classes
     custom_classes_input = st.text_input(
         "Add custom asset classes (comma-separated)",
-        placeholder="e.g. AI, Green Energy, Healthcare",
+        placeholder="e.g. AI, Green_Energy, Healthcare",
         help="Only useful if you want to set asset class constraints later"
     )
     
