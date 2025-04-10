@@ -41,18 +41,13 @@ with tab1:
     num_assets = st.number_input("Number of assets", min_value=1, step=1, value=1)
     num_exchanges = st.number_input("Number of exchanges", min_value=1, step=1, value=1)
     num_asset_classes = st.number_input("Number of asset classes", min_value=1, step=1, value=1)
-    st.markdown("### 🔖 Asset Class Naming")
-
-    default_names = ["Stocks", "Bonds", "Crypto", "Commodities", "Real Estate", "Cash"]
-    asset_class_labels = []
-    
-    for j in range(num_asset_classes):
-        label = st.text_input(
-            f"Name for asset class {j+1}",
-            value=default_names[j] if j < len(default_names) else f"Class {j+1}",
-            key=f"asset_class_label_{j}"
-        )
-        asset_class_labels.append(label)
+    suggested_classes = ["Stocks", "Bonds", "Crypto", "Commodities", "Real Estate", "Cash", "Volatility"]
+    asset_class_labels = st.multiselect(
+        "Select or enter the asset classes you want to use:",
+        options=suggested_classes,
+        default=["Stocks", "Crypto"],
+        help="Pick from common asset classes or type in your own."
+    )
     tickers = []
     exchanges = []
     asset_classes = []
