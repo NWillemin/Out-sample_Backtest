@@ -253,15 +253,31 @@ with tab4:
         portfolio_holdings, real_weights, portfolio_value, portfolio_holdings_bench, real_weights_bench, portfolio_value_bench = run_backtest(config)
         portfolio_value = portfolio_value.astype(float)
         portfolio_value_bench = portfolio_value_bench.astype(float)
+        
+        st.session_state["backtest_result"] = {
+        "portfolio_value": portfolio_value,
+        "real_weights": real_weights,
+        "portfolio_value_bench": portfolio_value_bench,
+        "real_weights_bench": real_weights_bench,
+        "config": config,
+        }
+    if "backtest_result" in st.session_state:
+        result = st.session_state["backtest_result"]
+        
+        portfolio_value = result["portfolio_value"].astype(float)
+        portfolio_value_bench = result["portfolio_value_bench"].astype(float)
+        real_weights = result["real_weights"]
+        real_weights_bench = result["real_weights_bench"]
+        config = result["config"]
+    
         if return_type_perf == 'arithmetic':
             returns = portfolio_value.pct_change().dropna()
             returns_bench = portfolio_value_bench.pct_change().dropna()
-        elif return_type_perf == 'logarithmic':
-            returns = np.log(portfolio_value/portfolio_value.shift(1)).dropna()
-            returns_bench = np.log(portfolio_value_bench/portfolio_value_bench.shift(1)).dropna()
-        
-
-
+        else:
+            returns = np.log(portfolio_value / portfolio_value.shift(1)).dropna()
+            returns_bench = np.log(portfolio_value_bench / portfolio_value_bench.shift(1)).dropna()
+    
+        # Metrics
         avg_returns, vol, sharpe, sortino, omega, max_dd, cvar = compute_metrics(returns, rf)
         bench_avg, bench_vol, bench_sharpe, bench_sortino, bench_omega, bench_max_dd, bench_cvar = compute_metrics(returns_bench, rf)
         col1, col2 = st.columns(2)
@@ -284,11 +300,11 @@ with tab4:
             st.write(f"Omega Ratio: {bench_omega:.2f}")
             st.write(f"Max Drawdown: {bench_max_dd:.2%}")
             st.write(f"CVaR: {bench_cvar:.2%}")
-
+    
         st.subheader("Performance Chart")
         fig = plot_cumulative_returns(portfolio_value, portfolio_value_bench)
         st.pyplot(fig)
-
+    
         st.subheader("Weight Allocation Over Time")
         tab_weights_port, tab_weights_bench = st.tabs(["Portfolio", "Benchmark"])
         
@@ -301,7 +317,7 @@ with tab4:
             st.markdown("### Benchmark Weights Over Time")
             fig1_bench = plot_weight_evolution(real_weights_bench)
             st.pyplot(fig1_bench)
-
+    
         st.subheader("Average Weight of each Asset")
         fig2 = plot_average_weights(real_weights, real_weights_bench)
         st.pyplot(fig2)
